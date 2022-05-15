@@ -1,7 +1,7 @@
 # Java课程设计：Minecraft玩家管理系统
 ## 人员
-1.多个勾吧的海林
-2.少个√吧的安绾
+1. 多个勾吧的海林
+2. 少个√吧的安绾
 
 ## 设计目的
 1. 完成课设任务，及格
@@ -11,6 +11,14 @@
 ## 协同代码
 * idea配置github https://github.com/Hailaylin/MinecraftLauncherDemo
 * 从github导入项目到idea https://blog.csdn.net/achuanju/article/details/105648734
+
+## 设置代理
+git config --global https.proxy http://127.0.0.1:1081
+git config --global https.proxy https://127.0.0.1:1081
+
+## 取消代理
+git config --global --unset http.proxy
+git config --global --unset https.proxy
 
 ## 项目任务书和说明书
 等老师发再填写
