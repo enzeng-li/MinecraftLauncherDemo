@@ -1,11 +1,15 @@
 package view;
 
+import db.RegisterDB;
+import db.updata;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class AddFrame implements KeyListener {
     JTextField adduser_1 = new JTextField();
@@ -35,12 +39,18 @@ public class AddFrame implements KeyListener {
     }
 
     @Override
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ENTER){
             s=adduser_1.getText();
             System.out.printf(s);
-
-            System.out.printf("用户添加成功");//此处应该调用sql进行添加角色
+            RegisterDB Re = new RegisterDB();
+            try {
+                Re.insert_user_tourist(s);//初始密码000000
+                frame.dispose();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             frame.setVisible(false);
         }
     }
@@ -50,7 +60,4 @@ public class AddFrame implements KeyListener {
 
     }
 
-    public static void main(String[] args) {
-        new AddFrame();
-    }
 }
