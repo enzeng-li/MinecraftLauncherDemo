@@ -1,5 +1,7 @@
 package view;
 
+import model.UserModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,6 +11,7 @@ import java.net.UnknownHostException;
 
 public class AdministratorFrame implements ActionListener {
 //管理员
+    UserModel user;
     final JButton exitBotton = new JButton("退出");
     JButton starGameBotton = new JButton("游戏启动");
     JButton profileBotton = new JButton("个人资料");
@@ -17,7 +20,8 @@ public class AdministratorFrame implements ActionListener {
     JButton addMsgBotton = new JButton("发布消息");
 
     // 窗体结构
-    AdministratorFrame() {
+    AdministratorFrame(UserModel user) {
+        this.user=user;
         JFrame frame = new JFrame();
         frame.setLayout(null);
         frame.setTitle("管理员窗口");
@@ -69,6 +73,7 @@ public class AdministratorFrame implements ActionListener {
         adminFuncBotton.addActionListener(this);
         showMsgBotton.addActionListener(this);
         addMsgBotton.addActionListener(this);
+
     }
 
 
@@ -86,20 +91,20 @@ public class AdministratorFrame implements ActionListener {
 
         else if(e.getSource()== profileBotton)
         {
-            new ProfileFrame();
+            new ProfileFrame(user);//个人资料界面
          }
         else if(e.getSource()== adminFuncBotton)
          {
-             new administrator_features();
+             new administrator_features();//管理员功能界面
          }
         else if(e.getSource()== showMsgBotton)
          {
-             new newmassage();
+             new newmassage();//新消息界面
          }
         else if(e.getSource()== addMsgBotton)
          {
              try {
-                 new sendmassage();
+                 new sendmassage();//发布消息界面
              } catch (UnknownHostException ex) {
                  throw new RuntimeException(ex);
              }
@@ -107,8 +112,6 @@ public class AdministratorFrame implements ActionListener {
     }
 
     // 测试窗体功能
-    public static void main(String[] args) {
-        new AdministratorFrame();
-    }
+
 
 }

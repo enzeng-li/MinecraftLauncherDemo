@@ -1,9 +1,13 @@
 package view;
 
+import db.updata;
+import model.UserModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class Modification implements ActionListener {
     JTextField newemail_1 = new JTextField();
@@ -15,8 +19,9 @@ public class Modification implements ActionListener {
 
     private static String s;
     JFrame frame = new JFrame("修改信息");
-
-    Modification(){
+    UserModel user;
+    Modification(UserModel user){
+        this.user=user;
         frame.setLayout(null);
         frame.setBounds(160, 200, 400, 170);
 
@@ -57,16 +62,40 @@ public class Modification implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==buttonregister_1)//修改电子邮箱
         {
-
+            user.setEmail(newemail_1.getText());
+            //连接数据库上传修改信息
+            try {
+                updata up=new updata();
+                up.update_email(user.getEmail(),user.getId());
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            JOptionPane.showMessageDialog(null, "邮箱修改成功","修改成功",JOptionPane.INFORMATION_MESSAGE);
+            frame.dispose();
         }
         else if(e.getSource()==buttonregister_2)//修改密码 要判断输入的旧密码与数据库中密码一直再进行新密码的写入
         {
-
+            if(user.getUserPasswd().equals(oldpsword_1.getText())){
+                user.setUserPasswd(newpasword_1.getText());
+                //连接数据库上传修改信息
+                try {
+                    updata up = new updata();
+                    up.update_password(user.getUserPasswd(),user.getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane.showMessageDialog(null, "密码修改成功","修改成功",JOptionPane.INFORMATION_MESSAGE);
+                frame.dispose();
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "两次输入的密码不一致!","密码错误",JOptionPane.ERROR_MESSAGE);
+            }
         }
         else if (e.getSource()==buttonregister_3)
         {
-            frame.dispose();
+            frame.dispose();//退出修改界面
         }
 
     }
+
 }
