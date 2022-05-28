@@ -95,7 +95,7 @@ public class AdministratorFrame implements ActionListener {
          }
         else if(e.getSource()== adminFuncBotton)
          {
-             new administrator_features();//管理员功能界面
+             new AdministratorModifyFuncs();//管理员功能界面
          }
         else if(e.getSource()== showMsgBotton)
          {
@@ -104,7 +104,7 @@ public class AdministratorFrame implements ActionListener {
         else if(e.getSource()== addMsgBotton)
          {
              try {
-                 new sendmassage();//发布消息界面
+                 new AdminChangeNoticeFrame();//发布消息界面
              } catch (UnknownHostException ex) {
                  throw new RuntimeException(ex);
              }
