@@ -1,12 +1,12 @@
 package view;
 
-import Dao.UsersDao;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.Date;
+
+import dao.RegisterDao;
+import model.UserModel;
 
 public class RegisterFrame extends JFrame {
     RegisterFrame() {
@@ -44,9 +44,9 @@ public class RegisterFrame extends JFrame {
         confrimPassword.setBounds(100, 140, 120, 21);
         frame.add(confrimPassword);
 
-        JButton buttonregister_1 = new JButton("确定");
-        buttonregister_1.setBounds(30, 190, 60, 23);
-        frame.add(buttonregister_1);
+        JButton confirmBotton = new JButton("确定");
+        confirmBotton.setBounds(30, 190, 60, 23);
+        frame.add(confirmBotton);
         JButton buttonregister_2 = new JButton("重置");
         buttonregister_2.setBounds(190, 190, 60, 23);
         frame.add(buttonregister_2);
@@ -54,45 +54,49 @@ public class RegisterFrame extends JFrame {
         buttonregister_3.setBounds(110, 190, 60, 23);
         frame.add(buttonregister_3);
 
-
         frame.setBounds(100, 100, 300, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         //为注册按钮增加监听器
-        buttonregister_1.addActionListener(new ActionListener() {
-
+        // 确认按钮
+        confirmBotton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = userName.getText();
                 String passwd = new String(password.getPassword());
                 String confrimpasswd = new String(confrimPassword.getPassword());
                 String email = useremail.getText();
-                //创建Register类
-                UsersDao register = new UsersDao();
-                register.setname(name);
-                register.setPassword(passwd);
-                register.setconfirmpasswd(confrimpasswd);
-                register.setmail(email);
 
-
-                //如果注册成功，返回登录界面
-                try {
-                    if (register.JudgeRegister()) {
-                        frame.dispose();
-                        new LoginFrame().setVisible(true);
-//                        Date date1 = new Date();
-//                        System.out.println(date1.toString());//注册时间，后面可以写入数据库，太麻烦不想启用
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                if(name.equals("")){
+                    JOptionPane.showMessageDialog(null, "用户名不能为空！", "用户名", JOptionPane.ERROR_MESSAGE);
+                }
+                else if(passwd.equals("")){
+                    JOptionPane.showMessageDialog(null, "密码不能为空！", "密码为空", JOptionPane.ERROR_MESSAGE);
+                }
+                else if(confrimpasswd.equals("")){
+                    JOptionPane.showMessageDialog(null, "确认密码不能为空！", "确认密码为空", JOptionPane.ERROR_MESSAGE);
+                }
+                else if(passwd.equals(confrimpasswd)){      // 判断成功
+                    UserModel regUser = new UserModel();
+                    regUser.setUserName(name);
+                    regUser.setUserPasswd(passwd);
+                    regUser.setEmail(email);
+                    regUser.setIdentity(1); // 默认权限1
+                    RegisterDao registerDao = new RegisterDao(regUser);
+                    registerDao.addUser();
+                    frame.dispose();
+                    new LoginFrame().setVisible(true);
+                    // 最后弹出注册成功
+                    JOptionPane.showMessageDialog(null, "注册成功","注册成功",JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "两次输入的密码不一致!", "密码不一致", JOptionPane.ERROR_MESSAGE);
                 }
 
             }
-
         });
+
         buttonregister_2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,8 +105,6 @@ public class RegisterFrame extends JFrame {
                 confrimPassword.setText("");
                 useremail.setText("");
             }
-
-
         });
         buttonregister_3.addActionListener(new ActionListener(){
         public void actionPerformed (ActionEvent e){
@@ -112,6 +114,9 @@ public class RegisterFrame extends JFrame {
         });
     }
 
-
+    // test frame
+    public static void main(String[] args) {
+        new RegisterFrame();
+    }
 
 }
