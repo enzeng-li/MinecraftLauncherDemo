@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import model.ServerModel;
 import model.UserModel;
 
 public class LoginDB {
@@ -67,6 +68,51 @@ public class LoginDB {
         con.close();
         return user;
     }
+
+/**
+ * 获取数据库中最新的公告信息返回数据封装在Server Model中
+ *
+ * */
+    public ServerModel  getSever() throws SQLException {
+        String sql_count="select count(*) from user ";
+        sta=con.prepareStatement(sql_count);
+        ResultSet show1=sta.executeQuery();
+        show1.next();
+        int  sum=show1.getInt(1);//获取编号最新的notice
+
+        String sql="select * from user where server_id =?";
+        sta= con.prepareStatement(sql);
+        sta.setInt(1,sum);
+        ResultSet rs= sta.executeQuery();
+        rs.next();
+        // 返回一个server对象，包含所有公告数据
+        ServerModel server = new ServerModel(
+                rs.getInt(1),
+                rs.getString(2),
+                rs.getString(3)
+
+        );
+        sta.close();
+        con.close();
+        return server;
+    }
+
+
+
+    /**
+     * 写入公告信息
+     * **/
+    public void set_notice(ServerModel ser) throws SQLException {
+        String sql="insert into servers(notice,serverAddr) values(?,?) ";
+        sta= con.prepareStatement(sql);
+        sta.setString(1,ser.getNotice());
+        sta.setString(2,ser.getServeraddr());
+        sta.executeUpdate();
+        System.out.println("添加公告成功");
+        sta.close();
+        con.close();
+    }
+
 
     //ID、密码登录
     /**
