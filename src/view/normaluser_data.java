@@ -73,7 +73,7 @@ public class normaluser_data implements ActionListener {
 
         else if(e.getSource()==psdoc)
         {
-            new person_doc();
+            new ProfileFrame();
         }
         else if(e.getSource()==newmesag)
         {

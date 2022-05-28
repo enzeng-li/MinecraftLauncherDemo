@@ -9,30 +9,32 @@ import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-
-
+import dao.LoginDao;
+import model.UserModel;
 
 public class LoginFrame extends JFrame implements ItemListener, ActionListener {
-    private JTextField textField;
+    private JTextField userNameField;
     private JPasswordField passwordField;
+    private UserModel user;                 // 保存用户信息，各窗体通用
 
     public static void main(String args[]) {
         new LoginFrame().setVisible(true);
         // 设置窗体可见，默认为不可见
-
+        // 默认程序入口
     }
 
     final JRadioButton people = new JRadioButton("游客");
     final JRadioButton manager = new JRadioButton("管理员");
     final JRadioButton normaluser = new JRadioButton("普通用户");
-    final JButton addButton = new JButton();
+    final JButton registerButton = new JButton();
     final JButton exitButton = new JButton();
     final JButton landButton = new JButton();
-    int tmp=0;//默认游客
+    int selectFrameType =0;//默认游客
 
+    // 窗体绘画
     public LoginFrame() {
         super(); // 继承父类的构造方法
-        setTitle("登录");
+        setTitle("我的世界玩家管理系统");
         setBounds(100, 100, 300, 300); // 设置窗体的显示位置及大小 height = 窗体的高
         getContentPane().setLayout(null); // 设置为不采用任何布局管理器
         setLocationRelativeTo(null);
@@ -56,9 +58,9 @@ public class LoginFrame extends JFrame implements ItemListener, ActionListener {
         usernameLabel.setBounds(43, 110, 60, 15); // 设置“用户名”标签的显示位置及大小
         getContentPane().add(usernameLabel);
 
-        textField = new JTextField();
-        textField.setBounds(94, 107, 120, 21); // 设置“用户名”文本框的显示位置及大小
-        getContentPane().add(textField);
+        userNameField = new JTextField();
+        userNameField.setBounds(94, 107, 120, 21); // 设置“用户名”文本框的显示位置及大小
+        getContentPane().add(userNameField);
 
         final JLabel passwordLabel = new JLabel();
         passwordLabel.setText("密  码");
@@ -70,9 +72,9 @@ public class LoginFrame extends JFrame implements ItemListener, ActionListener {
         getContentPane().add(passwordField);
 
 //        JButton addButton = new JButton();
-        addButton.setText("注册");
-        addButton.setBounds(30, 210, 60, 23); // 设置“退出”按钮的显示位置及大小
-        getContentPane().add(addButton);
+        registerButton.setText("注册");
+        registerButton.setBounds(30, 210, 60, 23); // 设置“退出”按钮的显示位置及大小
+        getContentPane().add(registerButton);
 
 
 //        JButton exitButton = new JButton();
@@ -105,7 +107,7 @@ public class LoginFrame extends JFrame implements ItemListener, ActionListener {
         normaluser.addItemListener(this);
         landButton.addActionListener(this);
         exitButton.addActionListener(this);
-        addButton.addActionListener(this);
+        registerButton.addActionListener(this);
         people.setSelected(true);
         people.addItemListener(this);
     }
@@ -114,12 +116,12 @@ public class LoginFrame extends JFrame implements ItemListener, ActionListener {
     public void itemStateChanged(ItemEvent e) {
 
         if (e.getSource() == manager) {
-            tmp = 1;
+            selectFrameType = 2;
         } else if (e.getSource() == normaluser) {
-            tmp = 0;
+            selectFrameType = 1;
         }
-        else if (e.getSource() == people) {
-            tmp = 3;
+        else if (e.getSource() == people) {     // 游客
+            selectFrameType = 0;
         }
     }
 
@@ -127,43 +129,42 @@ public class LoginFrame extends JFrame implements ItemListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == landButton) {
-
-
-            if (tmp == 1)//判断里加一个判断条件：数据库中是权限对应数值是否与tmp相等
+            // 从数据库中获取数据并判断
+            LoginDao loginDao = new LoginDao();
+            int userIdentity =loginDao.judgeUserNamePwd(userNameField.getText(), new String(passwordField.getPassword()));
+            if(userIdentity == -1){
+                JOptionPane.showMessageDialog(null, "您输入的用户名或密码错误", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+            if (selectFrameType == 2 && userIdentity == 2)//判断里加一个判断条件：数据库中是权限对应数值是否与indentity相等
             {
-            new Manger_data();//管理员窗口
-            setVisible(false);
+                new AdministratorFrame();//管理员窗口
+                setVisible(false);
                 System.out.println("管理员窗口");
             }
-            else if (tmp == 2)
+            else if (selectFrameType == 1 && userIdentity >= 1)     // 权限继承，管理员身份可以进入任何窗体
             {
-            new normaluser_data();//普通用户窗口
-            setVisible(false);
+                new normaluser_data();//普通用户窗口
+                setVisible(false);
                 System.out.println("普通用户窗口");
             }
-            else if (tmp == 0)
+            else if (selectFrameType == 0 && userIdentity >=0)
             {
-
-            new people_data();//游客用户窗口
-            setVisible(false);
+                new people_data();//游客用户窗口
+                setVisible(false);
                 System.out.println("游客用户窗口");
             }
         }
 
-            else if (e.getSource() == exitButton)
-            {
-//            dispose();
-                System.exit(0);
+        else if (e.getSource() == exitButton)
+        {
+            dispose();
+            System.exit(0);
+        }
 
-            }
-
-            else if (e.getSource() == addButton)
-            {
-                this.dispose();
-                RegisterFrame frame_1 = new RegisterFrame();
-            }
-
-
+        else if (e.getSource() == registerButton)
+        {
+            this.dispose();
+            RegisterFrame registerFrame = new RegisterFrame();
+        }
+    }
 }
-}
-

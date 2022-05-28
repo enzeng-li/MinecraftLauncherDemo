@@ -6,9 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DBUtil {
-    public static final String url="jdbc:mysql://localhost:3306/servers";
-    public static final String user ="root";
-    public static final String password="shhk010527..";
+    public static final String url="jdbc:mysql://localhost:3306/player_management";
+    public static final String user ="mcldb";
+    public static final String password="mcldbpwd";
     //类第一次加载的时候执行一次
     static {
         try {
